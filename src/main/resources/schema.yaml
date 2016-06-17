@@ -1,0 +1,95 @@
+PUT _template/yfcc100m_monthly
+{
+  "template": "yfcc100m_*",
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "index.refresh_interval": "30s"
+  },
+  "mappings": {
+    "post": {
+      "_source": {
+        "enabled": true
+      },
+      "dynamic": "strict",
+      "properties": {
+        "linenumber": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "id": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "hash": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "usernsid": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "datetaken":{
+            "type":"long"
+        },
+        "dateuploaded":{
+            "type":"long"
+        },
+        "capturedevice":{
+          "type": "string"
+        },
+        "title":{
+          "type": "string"
+        },
+        "description":{
+           "type": "string"
+        },
+        "usertags":{
+          "type": "string"
+        },
+         "machinetags":{
+          "type": "string"
+        },
+        "geo": {
+          "type": "geo_point",
+          "lat_lon": true
+        },
+        "accuracy":{
+          "type": "integer"
+        },
+        "url":{
+          "type": "string"
+        },
+        "downloadurl":{
+          "type": "string"
+        },
+        "licensename":{
+          "type": "string"
+        },
+        "licenseurl":{
+          "type": "string"
+        },
+        "serveridentifier":{
+          "type": "string"
+        },
+        "farmidentifier":{
+          "type": "string"
+        },"secret":{
+          "type": "string"
+        },
+        "secretoriginal":{
+          "type": "string"
+        },
+        "extension":{
+         "type": "string"
+        }
+        "marker":{
+        "type": "integer"
+        }
+      }
+    }
+  }
+}

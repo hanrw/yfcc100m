@@ -16,7 +16,7 @@ object MediaEval2016PlacingReader {
   private implicit val materializer = ActorMaterializer()
 
   def main(args: Array[String]) {
-    source("mediaeval2016_placing_train_photo.bz2").via(flow()).runWith(Sink.ignore)
+    source("yfcc100m_places.bz2").via(flow()).runWith(Sink.ignore)
   }
 
   def flow() = Flow[String].map { doc =>
@@ -26,16 +26,14 @@ object MediaEval2016PlacingReader {
   def source(filename: String): Source[String, NotUsed] = {
     val fis = ClassLoader.getSystemResourceAsStream(filename)
     val bcis = new BZip2CompressorInputStream(fis)
-    val iter = new WikiArticleIterator(bcis)
+    val iter = new StringIterator(bcis)
     Source.fromIterator(() => iter)
   }
 
 }
 
 
-case class WikiArticle(title: String, text: String)
-
-class WikiArticleIterator(val is: InputStream) extends Iterator[String] {
+class StringIterator(val is: InputStream) extends Iterator[String] {
   val source = IOSource.fromInputStream(is).getLines()
 
   override def hasNext: Boolean = source.hasNext
