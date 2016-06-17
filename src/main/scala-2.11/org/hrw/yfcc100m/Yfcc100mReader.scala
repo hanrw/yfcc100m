@@ -84,7 +84,7 @@ object Yfcc100mReader {
 
 //    val graph = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder: GraphDSL.Builder[akka.NotUsed] =>
 //      import GraphDSL.Implicits._
-//      val src = source("/Users/hanrenwei/百度云同步盘/我的文档/DOC/yfcc100m_dataset.bz2")
+//      val src = source("yfcc100m_dataset.bz2")
 //
 //      src ~> flow(yfcc100mIndexer) ~> Sink.ignore
 //      ClosedShape
