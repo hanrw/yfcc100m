@@ -85,7 +85,7 @@ PUT _template/yfcc100m_monthly
         },
         "extension":{
          "type": "string"
-        }
+        },
         "marker":{
         "type": "integer"
         }

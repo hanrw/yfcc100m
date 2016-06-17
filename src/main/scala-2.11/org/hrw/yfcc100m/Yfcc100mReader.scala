@@ -5,9 +5,12 @@ import java.text.SimpleDateFormat
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.stream.scaladsl._
+import akka.stream.{ActorMaterializer, ClosedShape}
+import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
+import org.elasticsearch.common.settings.Settings
+import org.hrw.yfcc100m.es.Yfcc100mIndexer
 
 object Yfcc100mReader {
   implicit def string2Yfcc100m(data: String): Yfcc100m = {
@@ -57,12 +60,38 @@ object Yfcc100mReader {
   private implicit val materializer = ActorMaterializer()
 
   def main(args: Array[String]) {
-    source("yfcc100m_dataset.bz2").via(flow()).runWith(Sink.ignore)
+    val client = {
+      val settings = Settings.settingsBuilder().put("client.transport.ignore_cluster_name", true).build()
+      ElasticClient.transport(settings, ElasticsearchClientUri("elasticsearch://192.168.99.100:9300"))
+    }
+
+    val numCPUs = Runtime.getRuntime().availableProcessors()
+
+//    def flow(yfcc100mIndexer: Yfcc100mIndexer) = Flow[String].map { doc =>
+//      println(doc)
+//      doc
+//    }.mapAsyncUnordered(numCPUs)(yfcc100mIndexer.indexData)
+
+    def flow(yfcc100mIndexer: Yfcc100mIndexer) = Flow[String].map { doc =>
+      println(doc)
+      yfcc100mIndexer.indexData(doc)
+    }
+
+    val yfcc100mIndexer = new Yfcc100mIndexer(client)
+            source("yfcc100m_dataset.bz2").via(flow(yfcc100mIndexer)).runWith(Sink.ignore)
+
+
+
+//    val graph = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder: GraphDSL.Builder[akka.NotUsed] =>
+//      import GraphDSL.Implicits._
+//      val src = source("/Users/hanrenwei/百度云同步盘/我的文档/DOC/yfcc100m_dataset.bz2")
+//
+//      src ~> flow(yfcc100mIndexer) ~> Sink.ignore
+//      ClosedShape
+//    })
+//    graph.run()
   }
 
-  def flow() = Flow[String].map { doc =>
-    println(doc)
-  }
 
   def source(filename: String): Source[String, NotUsed] = {
     val fis = new FileInputStream(filename)

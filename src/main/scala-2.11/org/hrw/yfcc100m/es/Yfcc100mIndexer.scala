@@ -40,7 +40,7 @@ class Yfcc100mIndexer(client: ElasticClient) {
       "description" -> data.description,
       "usertags" -> data.userTags,
       "machinetags" -> data.machineTags,
-      "geo" -> Map("geo" -> Map("lat" -> data.latitude, "lon" -> data.longitude)),
+      "geo" -> Map("lat" -> data.latitude, "lon" -> data.longitude),
       "accuracy" -> data.accuracy,
       "url" -> data.url,
       "downloadurl" -> data.downloadUrl,
