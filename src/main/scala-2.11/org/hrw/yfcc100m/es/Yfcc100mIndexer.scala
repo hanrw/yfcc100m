@@ -26,7 +26,7 @@ class Yfcc100mIndexer(client: ElasticClient) {
 
   def insertDsl(data: Yfcc100m) = {
     val id = data.id
-    index into exIndexer(data.dateTaken) / "post" id id fields(
+    update id id in exIndexer(data.dateTaken) / "post" docAsUpsert Map(
       "id" -> id,
       "linenumber" -> data.lineNumber,
       "id" -> data.id,
@@ -51,7 +51,7 @@ class Yfcc100mIndexer(client: ElasticClient) {
       "secret" -> data.secret,
       "secretoriginal" -> data.secretOriginal,
       "marker" -> data.marker
-      )
+    )
   }
 
 
