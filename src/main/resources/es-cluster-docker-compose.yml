@@ -1,0 +1,36 @@
+elasticsearch-master:
+  ports:
+  - 9200:9200/tcp
+  - 9300:9300/tcp
+  environment:
+    ES_HEAP_SIZE: 512m
+  command:
+  - elasticsearch
+  - -Des.cluster.name=es-cluster
+  - -Des.node.master=true
+  - -Des.node.data=false
+  image: slamhan/elasticsearch:latest
+elasticsearch2:
+  environment:
+    ES_HEAP_SIZE: 512m
+  command:
+  - elasticsearch
+  - -Des.cluster.name=es-cluster
+  - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
+  image: slamhan/elasticsearch:latest
+  links:
+  - elasticsearch-master:elasticsearch-master
+  volumes:
+  - /opt/elasticsearch/data
+elasticsearch1:
+  environment:
+    ES_HEAP_SIZE: 512m
+  command:
+  - elasticsearch
+  - -Des.cluster.name=es-cluster
+  - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
+  image: slamhan/elasticsearch:latest
+  links:
+  - elasticsearch-master:elasticsearch-master
+  volumes:
+  - /opt/elasticsearch/data
