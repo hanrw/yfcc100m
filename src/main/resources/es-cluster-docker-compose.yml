@@ -3,7 +3,7 @@ elasticsearch-master:
   - 9200:9200/tcp
   - 9300:9300/tcp
   environment:
-    ES_HEAP_SIZE: 1g
+    ES_HEAP_SIZE: 512m
   command:
   - elasticsearch
   - -Des.cluster.name=es-cluster
@@ -11,9 +11,9 @@ elasticsearch-master:
   - -Des.node.master=true
   - -Des.node.data=false
   image: slamhan/elasticsearch:latest
-elasticsearch2:
+elasticsearch-1:
   environment:
-    ES_HEAP_SIZE: 1g
+    ES_HEAP_SIZE: 512m
   command:
   - elasticsearch
   - -Des.cluster.name=es-cluster
@@ -23,10 +23,10 @@ elasticsearch2:
   links:
   - elasticsearch-master:elasticsearch-master
   volumes:
-  - /opt/elasticsearch/data
-elasticsearch1:
+  - /Users/hanrenwei/Developments/elasticsearch-data:/opt/elasticsearch/data
+elasticsearch-2:
   environment:
-    ES_HEAP_SIZE: 1g
+    ES_HEAP_SIZE: 512m
   command:
   - elasticsearch
   - -Des.cluster.name=es-cluster
@@ -36,4 +36,56 @@ elasticsearch1:
   links:
   - elasticsearch-master:elasticsearch-master
   volumes:
-  - /opt/elasticsearch/data
+  - /Users/hanrenwei/Developments/elasticsearch-data:/opt/elasticsearch/data
+elasticsearch-3:
+  environment:
+    ES_HEAP_SIZE: 512m
+  command:
+  - elasticsearch
+  - -Des.cluster.name=es-cluster
+  - -Des.node.name=es04
+  - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
+  image: slamhan/elasticsearch:latest
+  links:
+  - elasticsearch-master:elasticsearch-master
+  volumes:
+  - /Users/hanrenwei/Developments/elasticsearch-data:/opt/elasticsearch/data
+elasticsearch-4:
+  environment:
+    ES_HEAP_SIZE: 512m
+  command:
+  - elasticsearch
+  - -Des.cluster.name=es-cluster
+  - -Des.node.name=es05
+  - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
+  image: slamhan/elasticsearch:latest
+  links:
+  - elasticsearch-master:elasticsearch-master
+  volumes:
+  - /Users/hanrenwei/Developments/elasticsearch-data:/opt/elasticsearch/data
+elasticsearch-5:
+  environment:
+    ES_HEAP_SIZE: 512m
+  command:
+  - elasticsearch
+  - -Des.cluster.name=es-cluster
+  - -Des.node.name=es06
+  - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
+  image: slamhan/elasticsearch:latest
+  links:
+  - elasticsearch-master:elasticsearch-master
+  volumes:
+  - /Users/hanrenwei/Developments/elasticsearch-data:/opt/elasticsearch/data
+elasticsearch-6:
+  environment:
+    ES_HEAP_SIZE: 512m
+  command:
+  - elasticsearch
+  - -Des.cluster.name=es-cluster
+  - -Des.node.name=es07
+  - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
+  image: slamhan/elasticsearch:latest
+  links:
+  - elasticsearch-master:elasticsearch-master
+  volumes:
+  - /Users/hanrenwei/Developments/elasticsearch-data:/opt/elasticsearch/data
