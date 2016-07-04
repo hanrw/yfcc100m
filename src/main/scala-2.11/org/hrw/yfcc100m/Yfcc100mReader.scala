@@ -3,14 +3,23 @@ package org.hrw.yfcc100m
 import java.text.SimpleDateFormat
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
+import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri}
 import org.elasticsearch.common.settings.Settings
 import org.hrw.yfcc100m.es.Yfcc100mIndexer
 import org.hrw.yfcc100m.stream.StreamUtils
 
 object Yfcc100mReader {
+
+  private lazy implicit val system = ActorSystem("mediaeval2016")
+  val decider: Supervision.Decider = { e =>
+    println("Unhandled exception in stream", e)
+    Supervision.Stop
+  }
+  val materializerSettings = ActorMaterializerSettings(system).withSupervisionStrategy(decider)
+  implicit val materializer = ActorMaterializer(materializerSettings)(system)
+
   implicit def string2Yfcc100m(data: String): Yfcc100m = {
     val splitData = data.split("\t")
     val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -20,8 +29,14 @@ object Yfcc100mReader {
       hash = splitData(2),
       userNsid = splitData(3),
       nickName = splitData(4),
-      dateTaken = sdf.parse(splitData(5)).getTime,
-      dateUploaded = splitData(6).toLong * 1000,
+      dateTaken = Option(splitData(5)) match {
+        case Some(x) if (!x.equals("null")) => sdf.parse(x).getTime
+        case _ => 0L
+      },
+      dateUploaded = Option(splitData(6)) match {
+        case Some(x) => x.toLong * 1000
+        case None => 0L
+      },
       captureDevice = splitData(7),
       title = splitData(8),
       description = splitData(9),
@@ -54,29 +69,28 @@ object Yfcc100mReader {
       })
   }
 
-  private lazy implicit val system = ActorSystem("mediaeval2016")
-  private implicit val materializer = ActorMaterializer()
 
   def main(args: Array[String]) {
     val client = {
-      val settings = Settings.settingsBuilder().put("client.transport.ignore_cluster_name", true).build()
-      ElasticClient.transport(settings, ElasticsearchClientUri("elasticsearch://192.168.99.100:9300"))
+//      val settings = Settings.settingsBuilder().put("client.transport.ignore_cluster_name", true).build()
+      val settings = Settings.settingsBuilder().put("cluster.name", "es-cluster").build()
+      ElasticClient.transport(settings, ElasticsearchClientUri("elasticsearch://192.168.2.14:9300"))
     }
 
-    val numCPUs = Runtime.getRuntime().availableProcessors()
+    val numCPUs = Runtime.getRuntime().availableProcessors()*32
 
-    //    def flow(yfcc100mIndexer: Yfcc100mIndexer) = Flow[String].map { doc =>
-    //      println(doc)
-    //      doc
-    //    }.mapAsyncUnordered(numCPUs)(yfcc100mIndexer.indexData)
+//        def flow(yfcc100mIndexer: Yfcc100mIndexer) = Flow[String].map { doc =>
+////          println(doc)
+//          doc
+//        }.mapAsyncUnordered(numCPUs)(yfcc100mIndexer.indexData)
 
     def flow(yfcc100mIndexer: Yfcc100mIndexer) = Flow[String].map { doc =>
-      println(doc)
+//      println(doc)
       yfcc100mIndexer.indexData(doc)
     }
 
     val yfcc100mIndexer = new Yfcc100mIndexer(client)
-    StreamUtils.bz2asSource("/Users/hanrenwei/Developments/elasticsearch-data/yfcc100m_dataset.bz2.part-aa").via(flow(yfcc100mIndexer)).runWith(Sink.ignore)
+    StreamUtils.bz2asSource("yfcc100m_dataset.bz2").via(flow(yfcc100mIndexer)).runWith(Sink.ignore)
 
 
 
