@@ -3,8 +3,8 @@ package org.hrw.yfcc100m.es
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
-import com.sksamuel.elastic4s.ElasticClient
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.{ElasticClient, UpdateDefinition}
 import org.hrw.yfcc100m.Yfcc100m
 import org.hrw.yfcc100m.Yfcc100mReader._
 
@@ -14,19 +14,9 @@ class Yfcc100mIndexer(client: ElasticClient) {
     client.execute(insertDsl(data))
   }
 
-
-  def exIndexer(datetaken: Long): String = {
-    val postDate = {
-      val calendar = Calendar.getInstance()
-      calendar.setTimeInMillis(datetaken)
-      calendar
-    }
-    "yfcc100m_" + new SimpleDateFormat("yyyy_MM").format(postDate.getTime)
-  }
-
   def insertDsl(data: Yfcc100m) = {
     val id = data.id
-    update id id in exIndexer(data.dateTaken) / "post" docAsUpsert Map(
+    update id id in exIndexer(data.dateUploaded) / "post" docAsUpsert Map(
       "id" -> id,
       "linenumber" -> data.lineNumber,
       "id" -> data.id,
@@ -52,6 +42,22 @@ class Yfcc100mIndexer(client: ElasticClient) {
       "secretoriginal" -> data.secretOriginal,
       "marker" -> data.marker
     )
+  }
+
+  def exIndexer(datetaken: Long): String = {
+    val postDate = {
+      val calendar = Calendar.getInstance()
+      calendar.setTimeInMillis(datetaken)
+      calendar
+    }
+    "yfcc100m_" + new SimpleDateFormat("yyyy_MM").format(postDate.getTime)
+  }
+
+  def bulkIndex(lists: List[UpdateDefinition]) = {
+    println("lists:" + lists.size)
+    client.execute {
+      bulk(lists)
+    }
   }
 
 

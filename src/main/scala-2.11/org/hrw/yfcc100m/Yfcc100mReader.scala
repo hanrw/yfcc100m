@@ -72,25 +72,25 @@ object Yfcc100mReader {
 
   def main(args: Array[String]) {
     val client = {
-//      val settings = Settings.settingsBuilder().put("client.transport.ignore_cluster_name", true).build()
+      //      val settings = Settings.settingsBuilder().put("client.transport.ignore_cluster_name", true).build()
       val settings = Settings.settingsBuilder().put("cluster.name", "es-cluster").build()
       ElasticClient.transport(settings, ElasticsearchClientUri("elasticsearch://192.168.2.14:9300"))
     }
 
-    val numCPUs = Runtime.getRuntime().availableProcessors()*32
-
-//        def flow(yfcc100mIndexer: Yfcc100mIndexer) = Flow[String].map { doc =>
-////          println(doc)
-//          doc
-//        }.mapAsyncUnordered(numCPUs)(yfcc100mIndexer.indexData)
+    //    val numCPUs = Runtime.getRuntime().availableProcessors()
+    //
+    //        def flow(yfcc100mIndexer: Yfcc100mIndexer) = Flow[String].map { doc =>
+    ////          println(doc)
+    //          doc
+    //        }.mapAsyncUnordered(numCPUs)(yfcc100mIndexer.indexData)
 
     def flow(yfcc100mIndexer: Yfcc100mIndexer) = Flow[String].map { doc =>
-//      println(doc)
-      yfcc100mIndexer.indexData(doc)
+      //      println(doc)
+      yfcc100mIndexer.insertDsl(doc)
     }
 
     val yfcc100mIndexer = new Yfcc100mIndexer(client)
-    StreamUtils.bz2asSource("yfcc100m_dataset.bz2").via(flow(yfcc100mIndexer)).runWith(Sink.ignore)
+    StreamUtils.bz2asSource("yfcc100m_dataset.bz2").via(flow(yfcc100mIndexer)).grouped(1000).mapAsync(8)(updates => yfcc100mIndexer.bulkIndex(updates.toList)).runWith(Sink.ignore)
 
 
 
