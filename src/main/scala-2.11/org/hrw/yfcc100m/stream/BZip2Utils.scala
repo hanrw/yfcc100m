@@ -1,4 +1,4 @@
-package org.hrw.yfcc100m
+package org.hrw.yfcc100m.stream
 
 import java.io.FileInputStream
 

@@ -1,7 +1,8 @@
 package org.hrw.yfcc100m
-import org.scalatest.{Matchers, FlatSpec}
+import org.hrw.yfcc100m.es.Yfcc100mIndexer
+import org.scalatest.{FlatSpec, Matchers}
 
-class Yfcc100mReaderSpec extends FlatSpec with Matchers{
+class Yfcc100mIndexerSpec extends FlatSpec with Matchers{
 val data = "6639\t" +
   "6162540254\t" +
   "4ccb23d8746b8d9d76ffd603fc7988\t" +
@@ -28,7 +29,7 @@ val data = "6639\t" +
   "0"
 
   "the reader" should "transform data into yfcc100m" in {
-    Yfcc100mReader.string2Yfcc100m(data).id should be("6162540254")
+    Yfcc100mIndexer.string2Yfcc100m(data).id should be("6162540254")
   }
 
 }

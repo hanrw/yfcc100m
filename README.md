@@ -17,5 +17,5 @@ Using
     Source.fromIterator(() => iter)
   }
 Mac:read processing speed max:5700+ line/seconds
-Ubuntu:read processing speed max:15600+ line/seconds
+Ubuntu:read processing speed max:15600+ line/seconds and indexing into es speed avg:8000+
 
