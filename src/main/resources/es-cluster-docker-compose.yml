@@ -55,3 +55,11 @@ elasticsearch-1:
   image: slamhan/elasticsearch:latest
   links:
   - elasticsearch-master:elasticsearch-master
+kibana-sense-marvel:
+  ports:
+  - 5061:5061
+  environment:
+  - ELASTICSEARCH_URL=http://192.168.2.14:9200
+  image: slamhan/kibana-sense-marvel:latest
+  links:
+  - elasticsearch-master:elasticsearch-master
