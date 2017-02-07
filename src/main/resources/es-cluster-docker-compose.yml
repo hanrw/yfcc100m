@@ -7,28 +7,17 @@ elasticsearch-master:
   command:
   - elasticsearch
   - -Des.cluster.name=es-cluster
-  - -Des.node.name=es01
+  - -Des.node.name=es-master
   - -Des.node.master=true
   - -Des.node.data=false
   image: slamhan/elasticsearch:latest
-elasticsearch-4:
+elasticsearch-1:
   environment:
     ES_HEAP_SIZE: 8g
   command:
   - elasticsearch
   - -Des.cluster.name=es-cluster
-  - -Des.node.name=es05
-  - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
-  image: slamhan/elasticsearch:latest
-  links:
-  - elasticsearch-master:elasticsearch-master
-elasticsearch-3:
-  environment:
-    ES_HEAP_SIZE: 8g
-  command:
-  - elasticsearch
-  - -Des.cluster.name=es-cluster
-  - -Des.node.name=es04
+  - -Des.node.name=es01
   - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
   image: slamhan/elasticsearch:latest
   links:
@@ -39,25 +28,36 @@ elasticsearch-2:
   command:
   - elasticsearch
   - -Des.cluster.name=es-cluster
-  - -Des.node.name=es03
+  - -Des.node.name=es02
   - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
   image: slamhan/elasticsearch:latest
   links:
   - elasticsearch-master:elasticsearch-master
-elasticsearch-1:
+elasticsearch-3:
   environment:
     ES_HEAP_SIZE: 8g
   command:
   - elasticsearch
   - -Des.cluster.name=es-cluster
-  - -Des.node.name=es02
+  - -Des.node.name=es03
+  - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
+  image: slamhan/elasticsearch:latest
+  links:
+  - elasticsearch-master:elasticsearch-master
+elasticsearch-4:
+  environment:
+    ES_HEAP_SIZE: 8g
+  command:
+  - elasticsearch
+  - -Des.cluster.name=es-cluster
+  - -Des.node.name=es04
   - -Des.discovery.zen.ping.unicast.hosts=elasticsearch-master
   image: slamhan/elasticsearch:latest
   links:
   - elasticsearch-master:elasticsearch-master
 kibana-sense-marvel:
   ports:
-  - 5061:5061
+  - 5601:5601
   environment:
   - ELASTICSEARCH_URL=http://192.168.2.14:9200
   image: slamhan/kibana-sense-marvel:latest
