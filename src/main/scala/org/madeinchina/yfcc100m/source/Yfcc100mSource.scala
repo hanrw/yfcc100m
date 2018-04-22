@@ -1,7 +1,6 @@
-package org.hrw.yfcc100m.source
+package org.madeinchina.yfcc100m.source
 
-import org.hrw.yfcc100m.stream.StreamUtils
-
+import org.madeinchina.yfcc100m.stream.StreamUtils
 
 object Yfcc100mSource {
 

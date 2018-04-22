@@ -1,5 +1,5 @@
-package org.hrw.yfcc100m
-import org.hrw.yfcc100m.es.Yfcc100mIndexer
+package org.madeinchina.yfcc100m
+import org.madeinchina.yfcc100m.es.Yfcc100mIndexer
 import org.scalatest.{FlatSpec, Matchers}
 
 class Yfcc100mIndexerSpec extends FlatSpec with Matchers{

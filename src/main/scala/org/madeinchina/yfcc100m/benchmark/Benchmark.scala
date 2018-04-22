@@ -1,4 +1,4 @@
-package org.hrw.yfcc100m.benchmark
+package org.madeinchina.yfcc100m.benchmark
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Flow
@@ -18,7 +18,8 @@ trait Benchmark {
     result
   }
 
-  val materializerSettings = ActorMaterializerSettings(system).withSupervisionStrategy(decider)
+  val materializerSettings =
+    ActorMaterializerSettings(system).withSupervisionStrategy(decider)
   implicit val materializer = ActorMaterializer(materializerSettings)(system)
 
   var count = 0L
@@ -30,7 +31,6 @@ trait Benchmark {
     if (cost > 0)
       println(s"process speed  ${count / cost}/seconds")
   }
-
 
   def flow() = Flow[String].map { doc =>
     statistics(doc)

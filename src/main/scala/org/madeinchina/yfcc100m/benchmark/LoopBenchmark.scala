@@ -1,4 +1,4 @@
-package org.hrw.yfcc100m.benchmark
+package org.madeinchina.yfcc100m.benchmark
 
 import akka.stream.scaladsl.{Sink, Source}
 

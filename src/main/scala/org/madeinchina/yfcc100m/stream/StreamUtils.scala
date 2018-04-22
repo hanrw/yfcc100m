@@ -1,4 +1,4 @@
-package org.hrw.yfcc100m.stream
+package org.madeinchina.yfcc100m.stream
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source

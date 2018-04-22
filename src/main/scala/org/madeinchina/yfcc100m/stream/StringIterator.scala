@@ -1,12 +1,11 @@
-package org.hrw.yfcc100m.stream
+package org.madeinchina.yfcc100m.stream
 
 import java.io.InputStream
 
 import scala.io.{Source => IOSource}
 
-
 class StringIterator(val is: InputStream) extends Iterator[String] {
-  val source = IOSource.createBufferedSource(is,500000).getLines()
+  val source = IOSource.createBufferedSource(is, 500000).getLines()
 
   override def hasNext: Boolean = source.hasNext
 

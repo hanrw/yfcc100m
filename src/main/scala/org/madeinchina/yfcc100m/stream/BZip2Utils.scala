@@ -1,4 +1,4 @@
-package org.hrw.yfcc100m.stream
+package org.madeinchina.yfcc100m.stream
 
 import java.io.FileInputStream
 
