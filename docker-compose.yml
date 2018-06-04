@@ -1,4 +1,4 @@
-version: '2.2'
+version: '2'
 services:
   elasticsearch1:
     image: docker.elastic.co/elasticsearch/elasticsearch-platinum:6.2.4
@@ -6,7 +6,7 @@ services:
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g"
       - xpack.monitoring.enabled=true
       - xpack.security.enabled=false
     ulimits:
@@ -15,15 +15,17 @@ services:
         hard: -1
     ports:
       - 9200:9200
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
     networks:
-      - esnet
+      - yffcc100mnet
   elasticsearch2:
     image: docker.elastic.co/elasticsearch/elasticsearch-platinum:6.2.4
     container_name: elasticsearch2
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g"
       - "discovery.zen.ping.unicast.hosts=elasticsearch1"
       - xpack.monitoring.enabled=true
       - xpack.security.enabled=false
@@ -31,8 +33,46 @@ services:
       memlock:
         soft: -1
         hard: -1
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
     networks:
-      - esnet
+      - yffcc100mnet
+  elasticsearch3:
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:6.2.4
+    container_name: elasticsearch3
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch1"
+      - xpack.monitoring.enabled=true
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata3:/usr/share/elasticsearch/data
+    networks:
+      - yffcc100mnet
+  elasticsearch4:
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:6.2.4
+    container_name: elasticsearch4
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch1"
+      - xpack.monitoring.enabled=true
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata4:/usr/share/elasticsearch/data
+    networks:
+      - yffcc100mnet
   kibana:
     image: docker.elastic.co/kibana/kibana:6.2.4
     hostname: kibana
@@ -43,9 +83,19 @@ services:
       - ELASTICSEARCH_URL=http://elasticsearch1:9200
       - XPACK_MONITORING_ENABLED=true
     networks:
-      - esnet
+      - yffcc100mnet
     depends_on:
       - elasticsearch1
       - elasticsearch2
+      - elasticsearch3
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+  esdata3:
+    driver: local
+  esdata4:
+    driver: local
 networks:
-  esnet:
+  yffcc100mnet:
